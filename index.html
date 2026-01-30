@@ -257,13 +257,13 @@
         />
 
         <div class="btns" id="ovBtns"></div>
-        <p class="tiny">Tip: I love you! You got this!</p>
+        <p class="tiny" id="tipLine">Tip: I love you! You got this!</p>
       </div>
     </div>
 
     <script>
       const FINAL_QUESTION =
-        "You made it passed 2 levels and collected 14 carrots.\nWill you be my valentine on 2/14? <3";
+        "You made it past 2 levels and collected 14 carrots.\nWill you be my valentine on 2/14? <3";
 
       const canvas = document.getElementById("game");
       const ctx = canvas.getContext("2d");
@@ -277,6 +277,7 @@
       const ovText = document.getElementById("ovText");
       const ovBtns = document.getElementById("ovBtns");
       const yesGif = document.getElementById("danceGif");
+      const tipLine = document.getElementById("tipLine");
 
       const keys = new Set();
       window.addEventListener("keydown", (e) => {
@@ -412,11 +413,13 @@
         yesGif.style.display = "none";
       }
 
-      function showOverlay(title, text, buttons) {
+      function showOverlay(title, text, buttons, showTip = false) {
         ovTitle.textContent = title;
         ovText.textContent = text;
         ovBtns.innerHTML = "";
         yesGif.style.display = "none";
+
+        tipLine.style.display = showTip ? "block" : "none";
 
         for (const b of buttons) {
           const btn = document.createElement("button");
@@ -669,6 +672,8 @@
                     yesGif.style.display = "block";
                     ovTitle.textContent = "YAY NOM";
                     ovBtns.innerHTML = "";
+                    ovText.textContent = "";
+                    tipLine.style.display = "none";
 
                     const btn = document.createElement("button");
                     btn.textContent = "Play Again";
@@ -681,6 +686,7 @@
                   onClick: () => askValentine("Try again"),
                 },
               ],
+              false,
             );
           }
           askValentine();
