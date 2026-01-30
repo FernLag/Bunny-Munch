@@ -10,6 +10,7 @@
         height: 100%;
         margin: 0;
       }
+
       body {
         display: grid;
         place-items: center;
@@ -22,10 +23,15 @@
           Roboto,
           Arial,
           sans-serif;
+        overflow: hidden;
       }
+
       .wrap {
         width: min(900px, 96vw);
+        position: relative;
+        z-index: 1;
       }
+
       canvas {
         width: 100%;
         height: auto;
@@ -34,6 +40,7 @@
         border: 1px solid rgba(118, 153, 185, 0.08);
         background: #7eb4e4;
       }
+
       .hud {
         display: flex;
         justify-content: space-between;
@@ -44,6 +51,7 @@
         opacity: 0.96;
         flex-wrap: wrap;
       }
+
       .pill {
         padding: 8px 12px;
         border-radius: 999px;
@@ -54,6 +62,7 @@
         gap: 8px;
         align-items: center;
       }
+
       kbd {
         background: rgba(255, 255, 255, 0.1);
         border: 1px solid rgba(255, 255, 255, 0.14);
@@ -62,13 +71,7 @@
         border-radius: 8px;
         font-size: 12px;
       }
-      .btns {
-        display: flex;
-        gap: 10px;
-        justify-content: center;
-        margin-top: 14px;
-        flex-wrap: wrap;
-      }
+
       button {
         border: 0;
         border-radius: 999px;
@@ -82,6 +85,15 @@
       button:hover {
         background: rgba(255, 255, 255, 0.16);
       }
+
+      .btns {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        margin-top: 14px;
+        flex-wrap: wrap;
+      }
+
       .overlay {
         position: fixed;
         inset: 0;
@@ -91,6 +103,7 @@
         backdrop-filter: blur(10px);
         z-index: 10;
       }
+
       .card {
         width: min(620px, 92vw);
         border-radius: 22px;
@@ -101,38 +114,25 @@
         text-align: center;
         white-space: pre-line;
       }
+
       .title {
         font-size: 22px;
         margin: 6px 0 6px;
         font-weight: 800;
       }
+
       .subtitle {
         opacity: 0.92;
         margin: 0 0 10px;
         line-height: 1.35;
       }
+
       .tiny {
         opacity: 0.7;
         font-size: 12px;
         margin-top: 10px;
       }
 
-      body {
-        display: grid;
-        place-items: center;
-        background: #81befe;
-        color: #eef7ff;
-        font-family:
-          system-ui,
-          -apple-system,
-          Segoe UI,
-          Roboto,
-          Arial,
-          sans-serif;
-        overflow: hidden; /* important so clouds don't create scrollbars */
-      }
-
-      /* Cloud layer behind content */
       .clouds {
         position: fixed;
         inset: 0;
@@ -141,16 +141,6 @@
         overflow: hidden;
       }
 
-      /* Make your main content sit above clouds */
-      .wrap,
-      canvas,
-      .hud,
-      .btns {
-        position: relative;
-        z-index: 1;
-      }
-
-      /* Cloud shape */
       .cloud {
         position: absolute;
         top: 10%;
@@ -164,7 +154,6 @@
         animation: drift linear infinite;
       }
 
-      /* extra puffs */
       .cloud::before,
       .cloud::after {
         content: "";
@@ -176,6 +165,7 @@
         top: -45px;
         left: 30px;
       }
+
       .cloud::after {
         width: 110px;
         height: 110px;
@@ -183,7 +173,6 @@
         left: 95px;
       }
 
-      /* Movement */
       @keyframes drift {
         from {
           transform: translateX(-40vw);
@@ -193,7 +182,6 @@
         }
       }
 
-      /* Individual clouds: different sizes/speeds/positions */
       .c1 {
         top: 12%;
         transform: scale(1);
@@ -223,6 +211,7 @@
       }
     </style>
   </head>
+
   <body>
     <div class="clouds" aria-hidden="true">
       <div class="cloud c1"></div>
@@ -230,41 +219,51 @@
       <div class="cloud c3"></div>
       <div class="cloud c4"></div>
     </div>
+
     <div class="wrap">
       <div class="hud">
         <div class="pill">Level: <span id="lvl">1</span> / 2</div>
+
         <div class="pill">
           Carrots: <span id="score">0</span> /
           <span id="goal">7</span>
         </div>
-        <div class="pill">Total: <span id="total">0</span> / 14</div>
-        <div class="pill">Time: <span id="time">0.0</span>s</div>
+
+        <div class="pill">Objective: Munch carrots and avoid foxes</div>
+
         <div class="pill">
           Move: <kbd>WASD</kbd>/<kbd>Arrows</kbd> • Sprint: <kbd>Shift</kbd>
         </div>
       </div>
 
       <canvas id="game" width="900" height="520"></canvas>
-
-      <div class="btns">
-        <button id="restartGame">Restart Game</button>
-      </div>
     </div>
 
     <div class="overlay" id="overlay">
       <div class="card">
         <div class="title" id="ovTitle">Title</div>
         <p class="subtitle" id="ovText">Text</p>
+
+        <img
+          id="danceGif"
+          src="dance.gif"
+          alt="Here is a bunny dancing"
+          style="
+            display: none;
+            width: min(360px, 90%);
+            border-radius: 14px;
+            margin: 10px auto 0;
+          "
+        />
+
         <div class="btns" id="ovBtns"></div>
         <p class="tiny">Tip: I love you! You got this!</p>
       </div>
     </div>
 
     <script>
-      // -------------------- Customize this line --------------------
       const FINAL_QUESTION =
         "You made it passed 2 levels and collected 14 carrots.\nWill you be my valentine on 2/14? <3";
-      // ------------------------------------------------------------
 
       const canvas = document.getElementById("game");
       const ctx = canvas.getContext("2d");
@@ -272,28 +271,13 @@
       const lvlEl = document.getElementById("lvl");
       const scoreEl = document.getElementById("score");
       const goalEl = document.getElementById("goal");
-      const totalEl = document.getElementById("total");
-      const timeEl = document.getElementById("time");
-      const restartGameBtn = document.getElementById("restartGame");
 
       const overlay = document.getElementById("overlay");
       const ovTitle = document.getElementById("ovTitle");
       const ovText = document.getElementById("ovText");
       const ovBtns = document.getElementById("ovBtns");
+      const yesGif = document.getElementById("danceGif");
 
-      // "Unlock" audio after first user interaction so it can play later
-      window.addEventListener(
-        "keydown",
-        () => {
-          bgm
-            .play()
-            .then(() => bgm.pause())
-            .catch(() => {});
-        },
-        { once: true },
-      );
-
-      // --------- Input ---------
       const keys = new Set();
       window.addEventListener("keydown", (e) => {
         keys.add(e.key.toLowerCase());
@@ -306,7 +290,6 @@
       });
       window.addEventListener("keyup", (e) => keys.delete(e.key.toLowerCase()));
 
-      // --------- Helpers ---------
       function rand(min, max) {
         return Math.random() * (max - min) + min;
       }
@@ -322,22 +305,19 @@
         return dist2(ax, ay, bx, by) <= (ar + br) * (ar + br);
       }
 
-      // --------- Background (grassy field) ---------
       const bg = document.createElement("canvas");
       bg.width = canvas.width;
       bg.height = canvas.height;
       const bctx = bg.getContext("2d");
 
       function buildGrassBackground() {
-        // base gradient
         const g = bctx.createLinearGradient(0, 0, 0, bg.height);
-        g.addColorStop(0, "#6fd26f"); // bright top
-        g.addColorStop(0.55, "#2fa94a"); // mid
-        g.addColorStop(1, "#1f7f35"); // darker bottom
+        g.addColorStop(0, "#6fd26f");
+        g.addColorStop(0.55, "#2fa94a");
+        g.addColorStop(1, "#1f7f35");
         bctx.fillStyle = g;
         bctx.fillRect(0, 0, bg.width, bg.height);
 
-        // subtle vignette
         const vg = bctx.createRadialGradient(
           bg.width * 0.5,
           bg.height * 0.4,
@@ -351,7 +331,6 @@
         bctx.fillStyle = vg;
         bctx.fillRect(0, 0, bg.width, bg.height);
 
-        // grass stripes
         bctx.globalAlpha = 0.18;
         for (let i = 0; i < 65; i++) {
           const y = i * (bg.height / 65);
@@ -361,7 +340,6 @@
         }
         bctx.globalAlpha = 1;
 
-        // speckles (texture)
         for (let i = 0; i < 1800; i++) {
           const x = rand(0, bg.width);
           const y = rand(0, bg.height);
@@ -373,7 +351,6 @@
           bctx.fill();
         }
 
-        // tiny flowers
         for (let i = 0; i < 120; i++) {
           const x = rand(18, bg.width - 18);
           const y = rand(30, bg.height - 18);
@@ -382,6 +359,7 @@
           bctx.beginPath();
           bctx.arc(x, y, 1.5, 0, Math.PI * 2);
           bctx.fill();
+
           bctx.fillStyle = `rgba(255,170,210,${a})`;
           bctx.beginPath();
           bctx.arc(x + 2, y + 1, 1.2, 0, Math.PI * 2);
@@ -390,7 +368,6 @@
       }
       buildGrassBackground();
 
-      // --------- RoundRect polyfill ---------
       if (!CanvasRenderingContext2D.prototype.roundRect) {
         CanvasRenderingContext2D.prototype.roundRect = function (
           x,
@@ -411,41 +388,36 @@
         };
       }
 
-      // --------- Game config ---------
       const LEVELS = 2;
       const PER_LEVEL = 7;
-      const TOTAL_GOAL = 14;
       goalEl.textContent = PER_LEVEL;
 
-      // --------- Entities ---------
       const bunny = { x: 140, y: 260, r: 16, vx: 0, vy: 0 };
       let carrots = [];
       let foxes = [];
 
-      // --------- State ---------
       let level = 1;
       let levelScore = 0;
       let totalScore = 0;
-      let t0 = performance.now();
-      let elapsed = 0;
       let last = performance.now();
 
       function updateHUD() {
         lvlEl.textContent = level;
         scoreEl.textContent = levelScore;
-        totalEl.textContent = totalScore;
-        timeEl.textContent = elapsed.toFixed(1);
       }
 
       function clearOverlay() {
         overlay.style.display = "none";
         ovBtns.innerHTML = "";
+        yesGif.style.display = "none";
       }
 
       function showOverlay(title, text, buttons) {
         ovTitle.textContent = title;
         ovText.textContent = text;
         ovBtns.innerHTML = "";
+        yesGif.style.display = "none";
+
         for (const b of buttons) {
           const btn = document.createElement("button");
           btn.textContent = b.label;
@@ -466,7 +438,6 @@
             glow: rand(0.55, 1.0),
           };
           if (!circleCollide(c.x, c.y, c.r, bunny.x, bunny.y, bunny.r + 60)) {
-            // don't spawn on foxes
             let ok = true;
             for (const f of foxes) {
               if (circleCollide(c.x, c.y, c.r, f.x, f.y, f.r + 30)) {
@@ -490,7 +461,6 @@
       }
 
       function spawnFox() {
-        // spawn at an edge
         const edge = Math.floor(rand(0, 4));
         let x, y;
         if (edge === 0) {
@@ -525,19 +495,16 @@
         bunny.vx = 0;
         bunny.vy = 0;
 
-        // carrots on field
         spawnCarrot();
         spawnCarrot();
 
-        // foxes per level
         if (level === 1) {
-          spawnFox(); // 1 fox
+          spawnFox();
         } else {
-          spawnFox(); // 2 foxes
+          spawnFox();
           spawnFox();
         }
 
-        t0 = performance.now();
         last = performance.now();
         clearOverlay();
         updateHUD();
@@ -545,9 +512,6 @@
 
       function restartGame() {
         totalScore = 0;
-        bgm.pause();
-        bgm.currentTime = 0;
-
         setupLevel(1);
       }
 
@@ -555,15 +519,11 @@
         setupLevel(level);
       }
 
-      restartGameBtn.addEventListener("click", restartGame);
-
-      // --------- Drawing ---------
       function drawCarrot(x, y, s, t) {
         ctx.save();
         ctx.translate(x, y);
         ctx.rotate(Math.sin(t * 0.002) * 0.18);
 
-        // leaves
         ctx.fillStyle = "rgba(90, 220, 120, 0.95)";
         ctx.beginPath();
         ctx.moveTo(-5 * s, -16 * s);
@@ -572,7 +532,6 @@
         ctx.quadraticCurveTo(0, -21 * s, -5 * s, -16 * s);
         ctx.fill();
 
-        // carrot body
         ctx.fillStyle = "rgba(255, 150, 50, 0.97)";
         ctx.beginPath();
         ctx.moveTo(0, 18 * s);
@@ -582,7 +541,6 @@
         ctx.closePath();
         ctx.fill();
 
-        // ridges
         ctx.strokeStyle = "rgba(190, 95, 25, 0.55)";
         ctx.lineWidth = 2;
         for (let i = -1; i <= 1; i++) {
@@ -600,40 +558,34 @@
         ctx.translate(x, y);
         const bob = Math.sin(t * 0.006) * 2.1;
 
-        // shadow on grass
         ctx.fillStyle = "rgba(0,0,0,0.18)";
         ctx.beginPath();
         ctx.ellipse(0, 18 + bob, 18, 8, 0, 0, Math.PI * 2);
         ctx.fill();
 
-        // ears
         ctx.fillStyle = "rgba(255,255,255,0.97)";
         ctx.beginPath();
         ctx.roundRect(-12, -34 + bob, 9, 26, 7);
         ctx.roundRect(3, -36 + bob, 9, 28, 7);
         ctx.fill();
 
-        // inner ears
         ctx.fillStyle = "rgba(255,170,210,0.55)";
         ctx.beginPath();
         ctx.roundRect(-10, -30 + bob, 5, 18, 5);
         ctx.roundRect(5, -32 + bob, 5, 20, 5);
         ctx.fill();
 
-        // head/body
         ctx.fillStyle = "rgba(255,255,255,0.97)";
         ctx.beginPath();
         ctx.roundRect(-18, -16 + bob, 36, 30, 14);
         ctx.fill();
 
-        // eyes
         ctx.fillStyle = "rgba(25,25,35,0.9)";
         ctx.beginPath();
         ctx.arc(-6, -2 + bob, 2.4, 0, Math.PI * 2);
         ctx.arc(6, -2 + bob, 2.4, 0, Math.PI * 2);
         ctx.fill();
 
-        // nose
         ctx.fillStyle = "rgba(255,120,160,0.9)";
         ctx.beginPath();
         ctx.arc(0, 3 + bob, 2.6, 0, Math.PI * 2);
@@ -647,25 +599,23 @@
         ctx.translate(x, y);
         ctx.rotate(Math.sin(t * 0.003) * 0.18);
 
-        // shadow
         ctx.fillStyle = "rgba(0,0,0,0.18)";
         ctx.beginPath();
         ctx.ellipse(0, r * 0.95, r * 1.0, r * 0.45, 0, 0, Math.PI * 2);
         ctx.fill();
 
-        // body
         ctx.fillStyle = "rgba(255, 105, 80, 0.95)";
         ctx.beginPath();
         ctx.ellipse(0, 0, r * 0.95, r * 0.7, 0, 0, Math.PI * 2);
         ctx.fill();
 
-        // ears
         ctx.beginPath();
         ctx.moveTo(-r * 0.65, -r * 0.1);
         ctx.lineTo(-r * 0.2, -r * 0.95);
         ctx.lineTo(0, -r * 0.25);
         ctx.closePath();
         ctx.fill();
+
         ctx.beginPath();
         ctx.moveTo(r * 0.65, -r * 0.1);
         ctx.lineTo(r * 0.2, -r * 0.95);
@@ -673,13 +623,11 @@
         ctx.closePath();
         ctx.fill();
 
-        // snout
         ctx.fillStyle = "rgba(255,255,255,0.88)";
         ctx.beginPath();
         ctx.ellipse(0, r * 0.22, r * 0.36, r * 0.26, 0, 0, Math.PI * 2);
         ctx.fill();
 
-        // eyes
         ctx.fillStyle = "rgba(25,25,35,0.9)";
         ctx.beginPath();
         ctx.arc(-r * 0.25, 0, r * 0.11, 0, Math.PI * 2);
@@ -689,7 +637,6 @@
         ctx.restore();
       }
 
-      // --------- Win / Lose / Level Flow ---------
       function caughtByFox() {
         showOverlay("You were caught by a fox :(", "Try again?", [
           { label: "Restart Level", onClick: () => restartLevel() },
@@ -700,7 +647,7 @@
       function levelComplete() {
         if (level < LEVELS) {
           showOverlay(
-            `Level ${level} Complete! ✅`,
+            `Level ${level} Complete!`,
             `You collected ${PER_LEVEL} carrots.\nReady for Level ${level + 1}?`,
             [
               {
@@ -711,42 +658,41 @@
             ],
           );
         } else {
-          playValentineMusic(); // ✅ start music when the question pops up
-          showOverlay("You Win! 🐰🥕💘", FINAL_QUESTION, [
-            {
-              label: "Yes ✅",
-              onClick: () => {
-                showOverlay(
-                  "YES!! 🐰💖",
-                  "Request accepted ✅\n(hearts merged successfully)",
-                  [{ label: "Play Again", onClick: () => restartGame() }],
-                );
-              },
-            },
-            {
-              label: "No 😄",
-              onClick: () => {
-                showOverlay(
-                  "All good 😄",
-                  "No pressure — thanks for playing ❤️",
-                  [{ label: "Play Again", onClick: () => restartGame() }],
-                );
-              },
-            },
-            { label: "Play Again", onClick: () => restartGame() },
-          ]);
+          function askValentine(prefix = "") {
+            showOverlay(
+              "You Win!S",
+              (prefix ? prefix + "\n\n" : "") + FINAL_QUESTION,
+              [
+                {
+                  label: "Yes",
+                  onClick: () => {
+                    yesGif.style.display = "block";
+                    ovTitle.textContent = "YAY NOM";
+                    ovBtns.innerHTML = "";
+
+                    const btn = document.createElement("button");
+                    btn.textContent = "Play Again";
+                    btn.onclick = () => restartGame();
+                    ovBtns.appendChild(btn);
+                  },
+                },
+                {
+                  label: "No",
+                  onClick: () => askValentine("Try again"),
+                },
+              ],
+            );
+          }
+          askValentine();
         }
       }
 
-      // --------- Loop ---------
       function tick(now) {
         const dt = Math.min(0.033, (now - last) / 1000);
         last = now;
-        elapsed = (now - t0) / 1000;
 
         const paused = overlay.style.display === "grid";
 
-        // movement
         const up = keys.has("w") || keys.has("arrowup");
         const down = keys.has("s") || keys.has("arrowdown");
         const left = keys.has("a") || keys.has("arrowleft");
@@ -781,7 +727,6 @@
           bunny.y = clamp(bunny.y, bunny.r + 6, canvas.height - bunny.r - 6);
         }
 
-        // fox chase
         if (!paused) {
           for (const f of foxes) {
             const dx = bunny.x - f.x;
@@ -801,7 +746,6 @@
           }
         }
 
-        // carrot collection
         if (!paused) {
           for (let i = carrots.length - 1; i >= 0; i--) {
             const c = carrots[i];
@@ -818,20 +762,15 @@
                 break;
               } else {
                 spawnCarrot();
-                // make level 2 slightly spicier as you progress
                 if (level === 2 && levelScore % 3 === 0) spawnFox();
               }
             }
           }
         }
 
-        // -------- render --------
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        // draw grass background
         ctx.drawImage(bg, 0, 0);
 
-        // subtle moving light sweep for "alive" field
         ctx.globalAlpha = 0.1;
         ctx.fillStyle = "#ffffff";
         const sweepX = (Math.sin(now * 0.00025) * 0.5 + 0.5) * canvas.width;
@@ -840,7 +779,6 @@
         ctx.fill();
         ctx.globalAlpha = 1;
 
-        // carrots
         for (const c of carrots) {
           const pulse = Math.sin(c.bob) * 0.12 + 0.98;
           ctx.shadowColor = "rgba(255,150,50,0.28)";
@@ -849,13 +787,11 @@
           ctx.shadowBlur = 0;
         }
 
-        // foxes
         ctx.shadowColor = "rgba(0,0,0,0.18)";
         ctx.shadowBlur = 10;
         for (const f of foxes) drawFox(f.x, f.y, f.r, now);
         ctx.shadowBlur = 0;
 
-        // bunny
         ctx.shadowColor = "rgba(0,0,0,0.16)";
         ctx.shadowBlur = 10;
         drawBunny(bunny.x, bunny.y, now);
@@ -865,7 +801,6 @@
         requestAnimationFrame(tick);
       }
 
-      // Start
       function start() {
         totalScore = 0;
         setupLevel(1);
